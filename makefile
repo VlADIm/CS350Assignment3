@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -pedantic -Wextra
 SRC = prog3.c
 OBJ = $(SRC:.c = .o)
 HDR = $(SRC:.c = .h)

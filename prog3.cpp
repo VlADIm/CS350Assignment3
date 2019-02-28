@@ -9,39 +9,138 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <vector>
+#include <queue>
+#include <algorithm>
 
 int main(){
     return 0;
 }
 
-int OPTReplacement(int memory_size, std::vecctor workflow){
+int OPTReplacement(int memory_size, std::vector workflow){
 
+    int hitcounter = 0;
+
+    int page_table [memory_size] = {-1};
+
+
+    //use find from algorithms to find next used
     //knowing which is the furthest access in the future
 
-    return 0;
-}
-int LRUReplacement(int memory_size){
+    for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
 
+    }
+
+
+    return hitcounter;
+}
+int LRUReplacement(int memory_size, std::vector<int> workflow){
+
+    int hitcounter = 0;
+
+    int page_table [memory_size] = {-1};
+
+
+    //iterate through the workflow
+    for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
+
+    }
     //TODO: least Recently used replacement
 
-    return 0;
+    return hitcounter;
 }
-int FIFOReplacement(int memory_size){
+/**
+*
+*
+*
+**/
+int FIFOReplacement(int memory_size, std::vector workflow){
 
     //first in first out replacement
     //this is just a queue
+    int hitcounter = 0;
+    int page_table [memory_size] = {-1};
 
-    return 0;
+    std::queue<int> page_queue;
+
+    //iterate through the workflow
+    for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
+
+        while((i < memory_size) && (page_table[i] != (*it)) && (page_table[i] != -1)){
+            i++;
+        }
+
+        if(i == memory_size){
+            //pop from queue and replace page
+
+        } else if(page_table[i] == -1){
+            //push to queue and input (*it)
+            page_table[i] = (*it);
+            page_queue.push((*it));
+        }  else if(page_table[i] == (*it)){
+            hitcounter++;
+        }
+
+    }
+
+    return hitcounter;
 }
-int RandReplacement(int memory_size){
+int RandReplacement(int memory_size, std::vector workflow){
+    /*Local Variables*/
+    int hitcounter = 0;
+    int page_table [memory_size] = {-1};
+    int rand_num;
+    int table_index;
+    /*Iterate through workflow pages*/
+    for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
 
-    //this is random replacement
+        /*Search page_table for (*it)*/
+        table_index = std::find(page_table, page_table + memory_size, (*it));
+        if(table_index != (page_table + memory_size)){
+            /*Page (*it) not in memory*/
+            table_index = std::find(page_table, page_table + memory_size, -1);
+            if(table_index != (page_table + memory_size)){
+                /*No free spaces in page table*/
+                srand(time(NULL));
+                rand_num = rand() % memory_size;
 
-    return 0;
+                /*NEED TO CHECK FOR 3 CASES:
+                *CASE 1:
+                *CASE 2:
+                */
+                if(page_table[rand_num] != (*it)){
+
+                }
+
+            } else {
+                *table_index = (*it);
+            }
+
+
+        } else {
+            /*Page (*it) in memory*/
+            hitcounter++;
+        }
+        /*Seed and generate randome number in [0, memory_size)*/
+
+    }
+    /*Return hitcounter variable*/
+    return hitcounter;
 }
-int ClockReplacemet(int memory_size){
+int ClockReplacemet(int memory_size, std::vector workflow){
 
     //clock replacement
 
-    return 0;
+    int hitcounter = 0;
+
+
+    int page_table [memory_size] = {-1};
+
+
+    //iterate through the workflow
+    for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
+
+    }
+
+
+    return hitcounter;
 }
