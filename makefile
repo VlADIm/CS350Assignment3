@@ -1,9 +1,9 @@
-CC = gcc
+CC = g++
 CFLAGS = -g -Wall -pedantic -Wextra
-SRC = prog3.c
-OBJ = $(SRC:.c = .o)
-HDR = $(SRC:.c = .h)
-EXC = $(SRC:.c = )
+SRC = replacementpolicy.cpp
+OBJ = $(SRC:.cpp = .o)
+HDR = $(SRC:.cpp = .h)
+EXC = prog3
 
 all: prog3.o
 	$(CC) $(CFLAGS) -o $(EXC) $(OBJ)
