@@ -34,8 +34,10 @@ int main(){
     // printf("RAND HITCOUNT:  %d\n", RandReplacement(5, myvector));
     // printf("CLOCK HITCOUNT: %d\n", ClockReplacemet(5, myvector));
 
-    std::vector<std::vector<int>> data = repeatReplacement(5, 15, 5, myvector);
-
+    int memory_size_start = 5;
+    int memory_size_end = 15;
+    int memory_size_step = 5;
+    std::vector<std::vector<int>> data = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, myvector);
     for(std::vector<std::vector<int>>::iterator iter_0 = data.begin(); iter_0 != data.end(); iter_0++){
         for(std::vector<int>::iterator iter_1 = (*iter_0).begin(); iter_1 != (*iter_0).end(); iter_1++){
             printf("VECTOR VECTOR DATA: %d\n", (*iter_1));
@@ -57,7 +59,6 @@ std::vector<std::vector<int>> repeatReplacement(int memory_size_start, int memor
         data.push_back(FIFOReplacement(index, workflow));
         data.push_back(RandReplacement(index, workflow));
         data.push_back(ClockReplacemet(index, workflow));
-        // printf("\nINDEX IS: %d\n\n", index);
         return_vector.push_back(data);
     }
 
