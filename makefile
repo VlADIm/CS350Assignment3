@@ -5,11 +5,11 @@ OBJ = $(SRC:.cpp = .o)
 HDR = $(SRC:.cpp = .h)
 EXC = prog3
 
-all: prog3.o
+all: replacementpolicy.o
 	$(CC) $(CFLAGS) -o $(EXC) $(OBJ)
 
-prog3.o: $(SRC) $(HDR)
+replacementpolicy.o: $(SRC) $(HDR)
 	$(CC) $(CFLAGS) -c $(SRC)
 
 clean:
-	rm -f $(OBJ) $(EXC)
+	rm -f replacementpolicy.o $(EXC)

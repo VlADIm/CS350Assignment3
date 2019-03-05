@@ -1,4 +1,3 @@
-#include"prog3.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -23,31 +22,60 @@ int main(){
     myvector.push_back(4);
     myvector.push_back(5);
     myvector.push_back(6);
-    myvector.push_back(7);
-    myvector.push_back(8);
-    myvector.push_back(9);
-    myvector.push_back(10);
+    myvector.push_back(1);
+    myvector.push_back(2);
+    myvector.push_back(3);
+    myvector.push_back(4);
 
 
-    OPTReplacement(10, myvector);
-    LRUReplacement(10, myvector);
-    FIFOReplacement(10, myvector);
-    RandReplacement(10, myvector);
-    ClockReplacemet(10, myvector);
+    // printf("OPT HITCOUNT:   %d\n", OPTReplacement(5, myvector));
+    // printf("LRU HITCOUNT:   %d\n", LRUReplacement(5, myvector));
+    // printf("FIFO HITCOUNT:  %d\n", FIFOReplacement(5, myvector));
+    // printf("RAND HITCOUNT:  %d\n", RandReplacement(5, myvector));
+    // printf("CLOCK HITCOUNT: %d\n", ClockReplacemet(5, myvector));
+
+    std::vector<std::vector<int>> data = repeatReplacement(5, 15, 5, myvector);
+
+    for(std::vector<std::vector<int>>::iterator iter_0 = data.begin(); iter_0 != data.end(); iter_0++){
+        for(std::vector<int>::iterator iter_1 = (*iter_0).begin(); iter_1 != (*iter_0).end(); iter_1++){
+            printf("VECTOR VECTOR DATA: %d\n", (*iter_1));
+        }
+    }
 
     return 0;
+}
+
+std::vector<std::vector<int>> repeatReplacement(int memory_size_start, int memory_size_end, int memory_size_step, std::vector<int> workflow){
+
+    std::vector<std::vector<int>> return_vector;
+    int index;
+    std::vector<int> data;
+    for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        data.push_back(OPTReplacement(index, workflow));
+        data.push_back(LRUReplacement(index, workflow));
+        data.push_back(FIFOReplacement(index, workflow));
+        data.push_back(RandReplacement(index, workflow));
+        data.push_back(ClockReplacemet(index, workflow));
+        // printf("\nINDEX IS: %d\n\n", index);
+        return_vector.push_back(data);
+    }
+
+    return return_vector;
 }
 
 int OPTReplacement(int memory_size, std::vector<int> workflow){
     /*Local Variables*/
     int hitcounter = 0;
     int table_index;
-    int page_table [memory_size] = {-1};
-    int victim_page;
+    int * page_table = new int[memory_size];
+    initTable(memory_size, page_table);
+    // int victim_page;
     int victim_page_distance;
+    int j;
+    std::vector<int>::iterator iter;
     /*Iterate through workflow pages*/
     for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
-        table_index = findindex(memory_size, page_table, (*it));
+        table_index = findIndex(memory_size, page_table, (*it));
         if(table_index == memory_size){
             /*Page (*it) not in memory*/
             table_index = findIndex(memory_size, page_table, -1);
@@ -56,13 +84,13 @@ int OPTReplacement(int memory_size, std::vector<int> workflow){
                 page_table[table_index] = (*it);
             } else {
                 /*No free spaces in page table*/
-                victim_page = page_table[0];
+                // victim_page = page_table[0];
                 victim_page_distance = 0;
-                for(int j = 0; j < memory_size; j++){
-                    for(std::vector<int>::iterator iter = (it + 1); iter != workflow.end(); iter++){if((*iter) == page_table[j]){break;}}
+                for(j = 0; j < memory_size; j++){
+                    for(iter = (it + 1); iter != workflow.end(); iter++){if((*iter) == page_table[j]){break;}}
                     if(std::distance(it,iter) > victim_page_distance){
-                        victim_page_distance = std:distance(it, iter);
-                        victim_page = j
+                        victim_page_distance = std::distance(it, iter);
+                        // victim_page = j;
                     }
                 }
                 page_table[j] = (*it);
@@ -72,25 +100,29 @@ int OPTReplacement(int memory_size, std::vector<int> workflow){
             hitcounter++;
         }
     }
+    delete[] page_table;
     return hitcounter;
 }
 int LRUReplacement(int memory_size, std::vector<int> workflow){
 
     int hitcounter = 0;
-    int lru_table [memory_size] = {-1};
-    int page_table [memory_size] = {-1};
-
+    int * lru_table  = new int[memory_size];
+    int * page_table = new int[memory_size];
+    initTable(memory_size, page_table);
+    initTable(memory_size, lru_table);
+    int table_index;
+    int i;
 
     //iterate through the workflow
     for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
-        table_index = findindex(memory_size, page_table, (*it));
+        table_index = findIndex(memory_size, page_table, (*it));
         if(table_index == memory_size){
             /*Page (*it) not in memory*/
             table_index = findIndex(memory_size, page_table, -1);
             if(table_index != memory_size){
                 /*Free spaces in page table*/
                 page_table[table_index] = (*it);
-                for(int i = 0; i < memory_size; i++){
+                for(i = 0; i < memory_size; i++){
                     if(i == table_index){
                         lru_table[i] = 0;
                     } else if(lru_table[i] != -1){
@@ -99,7 +131,7 @@ int LRUReplacement(int memory_size, std::vector<int> workflow){
                 }
             } else {
                 /*No free spaces in page table*/
-                for(int i = 0; i < memory_size; i++){
+                for(i = 0; i < memory_size; i++){
                     if(lru_table[i] == (memory_size - 1)){
                         lru_table[i] = 0;
                         page_table[i] = (*it);
@@ -110,7 +142,7 @@ int LRUReplacement(int memory_size, std::vector<int> workflow){
             }
         } else {
             /*Page (*it) in memory*/
-            for(int i = 0; i < memory_size; i++){
+            for(i = 0; i < memory_size; i++){
                 if(lru_table[i] < lru_table[table_index]){
                     lru_table[i] = lru_table[i] + 1;
                 }
@@ -120,7 +152,8 @@ int LRUReplacement(int memory_size, std::vector<int> workflow){
         }
     }
     //TODO: least Recently used replacement
-
+    delete[] page_table;
+    delete[] lru_table;
     return hitcounter;
 }
 /**
@@ -132,7 +165,8 @@ int FIFOReplacement(int memory_size, std::vector<int> workflow){
     /*Local Variables*/
     int hitcounter = 0;
     int table_index;
-    int page_table [memory_size] = {-1};
+    int * page_table = new int[memory_size];
+    initTable(memory_size, page_table);
     std::queue<int> page_queue;
     /*Iterate through workflow pages*/
     for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
@@ -156,12 +190,14 @@ int FIFOReplacement(int memory_size, std::vector<int> workflow){
             hitcounter++;
         }
     }
+    delete[] page_table;
     return hitcounter;
 }
 int RandReplacement(int memory_size, std::vector<int> workflow){
     /*Local Variables*/
     int hitcounter = 0;
-    int page_table [memory_size] = {-1};
+    int * page_table = new int[memory_size];
+    initTable(memory_size, page_table);
     int table_index;
     /*Seed random number generator*/
     srand(time(NULL));
@@ -186,6 +222,7 @@ int RandReplacement(int memory_size, std::vector<int> workflow){
         }
     }
     /*Return hitcounter variable*/
+    delete[] page_table;
     return hitcounter;
 }
 int ClockReplacemet(int memory_size, std::vector<int> workflow){
@@ -193,8 +230,9 @@ int ClockReplacemet(int memory_size, std::vector<int> workflow){
     //clock replacement
 
     int hitcounter = 0;
-    int page_table [memory_size] = {-1};
-    int valid_table [memory_size] = {0};
+    int * page_table = new int[memory_size];
+    initTable(memory_size, page_table);
+    int * valid_table = new int[memory_size]();
     int table_index;
     int clock_hand = 0;
 
@@ -215,6 +253,9 @@ int ClockReplacemet(int memory_size, std::vector<int> workflow){
             valid_table[table_index] = 1;
         }
     }
+
+    delete[] page_table;
+    delete[] valid_table;
     return hitcounter;
 }
 
@@ -224,4 +265,11 @@ int findIndex(int memory_size, int * table, int value){
         if(table[index] == value){return index;}
     }
     return memory_size;
+}
+
+void initTable(int memory_size, int * table){
+    int index;
+    for(index = 0; index < memory_size; index++){
+        table[index] = -1;
+    }
 }
