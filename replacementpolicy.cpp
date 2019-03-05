@@ -49,8 +49,9 @@ std::vector<std::vector<int>> repeatReplacement(int memory_size_start, int memor
 
     std::vector<std::vector<int>> return_vector;
     int index;
-    std::vector<int> data;
+
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        std::vector<int> data;
         data.push_back(OPTReplacement(index, workflow));
         data.push_back(LRUReplacement(index, workflow));
         data.push_back(FIFOReplacement(index, workflow));
