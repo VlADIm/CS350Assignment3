@@ -40,6 +40,7 @@ int main(){
     std::vector<std::vector<int>> data = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, myvector);
     for(std::vector<std::vector<int>>::iterator iter_0 = data.begin(); iter_0 != data.end(); iter_0++){
         for(std::vector<int>::iterator iter_1 = (*iter_0).begin(); iter_1 != (*iter_0).end(); iter_1++){
+            /*Data access here*/
             printf("VECTOR VECTOR DATA: %d\n", (*iter_1));
         }
     }
@@ -51,17 +52,43 @@ std::vector<std::vector<int>> repeatReplacement(int memory_size_start, int memor
 
     std::vector<std::vector<int>> return_vector;
     int index;
+    std::vector<int> data0;
+    std::vector<int> data1;
+    std::vector<int> data2;
+    std::vector<int> data3;
+    std::vector<int> data4;
+    std::vector<int> data5;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
-        std::vector<int> data;
-        data.push_back(OPTReplacement(index, workflow));
-        data.push_back(LRUReplacement(index, workflow));
-        data.push_back(FIFOReplacement(index, workflow));
-        data.push_back(RandReplacement(index, workflow));
-        data.push_back(ClockReplacemet(index, workflow));
-        return_vector.push_back(data);
+        data0.push_back(index);
     }
 
+    for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        data1.push_back(OPTReplacement(index, workflow));
+    }
+
+    for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        data2.push_back(LRUReplacement(index, workflow));
+    }
+
+    for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        data3.push_back(FIFOReplacement(index, workflow));
+    }
+
+    for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        data4.push_back(RandReplacement(index, workflow));
+    }
+
+    for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        data5.push_back(ClockReplacemet(index, workflow));
+    }
+
+    return_vector.push_back(data0);
+    return_vector.push_back(data1);
+    return_vector.push_back(data2);
+    return_vector.push_back(data3);
+    return_vector.push_back(data4);
+    return_vector.push_back(data5);
     return return_vector;
 }
 
