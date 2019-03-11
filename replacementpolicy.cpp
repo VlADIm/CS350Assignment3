@@ -8,25 +8,21 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include <queue>
 #include <algorithm>
+#include "generator.cpp"
 #include "replacementpolicy.h"
+
+void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::string filename);
 
 int main(){
 
-    std::vector<int> myvector;
-
-    myvector.push_back(1);
-    myvector.push_back(2);
-    myvector.push_back(3);
-    myvector.push_back(4);
-    myvector.push_back(5);
-    myvector.push_back(6);
-    myvector.push_back(1);
-    myvector.push_back(2);
-    myvector.push_back(3);
-    myvector.push_back(4);
-
+    std::cout << "Starting" << std::endl;
+    std::vector<int> randVector;
+    std::vector<int> leaning8020Vector;
+    std::vector<int> linearVector;
 
     // printf("OPT HITCOUNT:   %d\n", OPTReplacement(5, myvector));
     // printf("LRU HITCOUNT:   %d\n", LRUReplacement(5, myvector));
@@ -35,18 +31,62 @@ int main(){
     // printf("CLOCK HITCOUNT: %d\n", ClockReplacemet(5, myvector));
 
     int memory_size_start = 5;
-    int memory_size_end = 15;
+    int memory_size_end = 100;
     int memory_size_step = 5;
-    std::vector<std::vector<int>> data = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, myvector);
-    for(std::vector<std::vector<int>>::iterator iter_0 = data.begin(); iter_0 != data.end(); iter_0++){
-        for(std::vector<int>::iterator iter_1 = (*iter_0).begin(); iter_1 != (*iter_0).end(); iter_1++){
-            /*Data access here*/
-            printf("VECTOR VECTOR DATA: %d\n", (*iter_1));
-        }
-    }
+
+    /* Generate Random inputs */
+    generateRandom(100, 10000, randVector);
+    generate8020(100, 10000, leaning8020Vector);
+    generateLooping(100, 10000, linearVector);
+
+    std::cout << "Generated" << std::endl;
+
+    // Here I am trying to use repeatReplacement to generate all the
+    // data, using the randomly generated access. I am making the
+    // assumptions that the arguments are: the first size we want to access,
+    // the last size, the step size, and the vector containing the page 
+    // table access.
+    // There seems to be a problem in repeatReplacement.
+    std::vector<std::vector<int>> randData = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, randVector);
+
+    //std::vector<std::vector<int>> leaning8020Data = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, leaning8020Vector);
+    //std::vector<std::vector<int>> linearData = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, linearVector);
+
+    std::cout << "Replaced" << std::endl;
+
+    std::ofstream out;
+
+    std::string randFile = "randData.csv";
+    std::string leaning8020File = "leaningleaning8020Data.csv";
+    std::string loopingFile = "loopingData.csv";
+
+    writeData(randData, out, randFile);
+    //writeData(leaning8020Data, out, leaning8020File);
+    //writeData(linearData, out, loopingFile);
+
+    std::cout << "Done" << std::endl;
+
 
     return 0;
 }
+
+void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::string filename){
+    out.open(filename);
+    out << "#Cache size, OPT, LRU, FIFO, RAND, CLOCK" << std::endl;
+    for(std::vector<std::vector<int>>::iterator iter_0 = data.begin(); iter_0 != data.end(); iter_0++){
+        /* Iterate through the data */
+        for(std::vector<int>::iterator iter_1 = (*iter_0).begin(); iter_1 != (*iter_0).end(); iter_1++){
+            /*Data access here*/
+            out << *iter_1 << ", ";
+            std::cout << *iter_1 << ", ";
+            
+        }
+        out << std::endl;
+        std::cout << std::endl;
+    }
+    return;
+}
+
 
 std::vector<std::vector<int>> repeatReplacement(int memory_size_start, int memory_size_end, int memory_size_step, std::vector<int> workflow){
 
@@ -59,29 +99,48 @@ std::vector<std::vector<int>> repeatReplacement(int memory_size_start, int memor
     std::vector<int> data4;
     std::vector<int> data5;
 
+    std::cout << "Start" << std::endl;
+
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data0.push_back(index);
     }
 
+    std::cout << "2" << std::endl;
+
+    // TODO There seems to be an error in this for loop (or how i use args)
+    // I looked at the error and it seems to come from overwriting 
+    // data that has already been allocated
+    // It usually occurs on the second index of this loop.
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
+        std::cout << "Index: " << index << std::endl;
         data1.push_back(OPTReplacement(index, workflow));
     }
+
+    std::cout << "3" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data2.push_back(LRUReplacement(index, workflow));
     }
 
+    std::cout << "4" << std::endl;
+
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data3.push_back(FIFOReplacement(index, workflow));
     }
+
+    std::cout << "5" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data4.push_back(RandReplacement(index, workflow));
     }
 
+    std::cout << "6" << std::endl;
+
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data5.push_back(ClockReplacemet(index, workflow));
     }
+
+    std::cout << "END" << std::endl;
 
     return_vector.push_back(data0);
     return_vector.push_back(data1);
@@ -103,6 +162,9 @@ int OPTReplacement(int memory_size, std::vector<int> workflow){
     int j;
     std::vector<int>::iterator iter;
     /*Iterate through workflow pages*/
+
+    std::cout << "Started OPT" << std::endl;
+
     for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
         table_index = findIndex(memory_size, page_table, (*it));
         if(table_index == memory_size){
@@ -129,6 +191,8 @@ int OPTReplacement(int memory_size, std::vector<int> workflow){
             hitcounter++;
         }
     }
+    std::cout << "Finished OPT" << std::endl;
+
     delete[] page_table;
     return hitcounter;
 }
