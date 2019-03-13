@@ -44,10 +44,12 @@ int main(){
     // Here I am trying to use repeatReplacement to generate all the
     // data, using the randomly generated access. I am making the
     // assumptions that the arguments are: the first size we want to access,
-    // the last size, the step size, and the vector containing the page 
+    // the last size, the step size, and the vector containing the page
     // table access.
     // There seems to be a problem in repeatReplacement.
-    std::vector<std::vector<int>> randData = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, randVector);
+    std::vector<std::vector<int>> randData;
+
+    repeatReplacement(memory_size_start, memory_size_end, memory_size_step, randVector, randData);     //MEMCHECK
 
     //std::vector<std::vector<int>> leaning8020Data = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, leaning8020Vector);
     //std::vector<std::vector<int>> linearData = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, linearVector);
@@ -79,7 +81,7 @@ void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::str
             /*Data access here*/
             out << *iter_1 << ", ";
             std::cout << *iter_1 << ", ";
-            
+
         }
         out << std::endl;
         std::cout << std::endl;
@@ -88,82 +90,87 @@ void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::str
 }
 
 
-std::vector<std::vector<int>> repeatReplacement(int memory_size_start, int memory_size_end, int memory_size_step, std::vector<int> workflow){
-
-    std::vector<std::vector<int>> return_vector;
-    int index;
-    std::vector<int> data0;
-    std::vector<int> data1;
-    std::vector<int> data2;
-    std::vector<int> data3;
-    std::vector<int> data4;
-    std::vector<int> data5;
+void repeatReplacement(int memory_size_start, int memory_size_end, int memory_size_step, std::vector<int> workflow, std::vector<std::vector<int>> &return_vector){
+    int index = 0;
+    std::vector<int> data;
 
     std::cout << "Start" << std::endl;
 
+    std::cout << "1" << std::endl;
+
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
-        data0.push_back(index);
+        data.push_back(index);
     }
+    return_vector.push_back(data);
+    data = std::vector<int>();
 
     std::cout << "2" << std::endl;
 
     // TODO There seems to be an error in this for loop (or how i use args)
-    // I looked at the error and it seems to come from overwriting 
+    // I looked at the error and it seems to come from overwriting
     // data that has already been allocated
     // It usually occurs on the second index of this loop.
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
-        std::cout << "Index: " << index << std::endl;
-        data1.push_back(OPTReplacement(index, workflow));
+        data.push_back(OPTReplacement(index, workflow));
     }
+    return_vector.push_back(data);
+    data = std::vector<int>();
+
 
     std::cout << "3" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
-        data2.push_back(LRUReplacement(index, workflow));
+        data.push_back(LRUReplacement(index, workflow));
     }
+    return_vector.push_back(data);
+    data = std::vector<int>();
+
 
     std::cout << "4" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
-        data3.push_back(FIFOReplacement(index, workflow));
+        data.push_back(FIFOReplacement(index, workflow));
     }
+    return_vector.push_back(data);
+    data = std::vector<int>();
+
 
     std::cout << "5" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
-        data4.push_back(RandReplacement(index, workflow));
+        data.push_back(RandReplacement(index, workflow));
     }
+    return_vector.push_back(data);
+    data = std::vector<int>();
+
 
     std::cout << "6" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
-        data5.push_back(ClockReplacemet(index, workflow));
+        data.push_back(ClockReplacemet(index, workflow));
     }
+    return_vector.push_back(data);
+    data = std::vector<int>();
+
 
     std::cout << "END" << std::endl;
-
-    return_vector.push_back(data0);
-    return_vector.push_back(data1);
-    return_vector.push_back(data2);
-    return_vector.push_back(data3);
-    return_vector.push_back(data4);
-    return_vector.push_back(data5);
-    return return_vector;
 }
-
+/**
+*
+*
+*
+**/
 int OPTReplacement(int memory_size, std::vector<int> workflow){
     /*Local Variables*/
     int hitcounter = 0;
     int table_index;
     int * page_table = new int[memory_size];
     initTable(memory_size, page_table);
-    // int victim_page;
+    int victim_page;
     int victim_page_distance;
     int j;
     std::vector<int>::iterator iter;
     /*Iterate through workflow pages*/
-
-    std::cout << "Started OPT" << std::endl;
 
     for(std::vector<int>::iterator it = workflow.begin(); it != workflow.end(); it++){
         table_index = findIndex(memory_size, page_table, (*it));
@@ -175,27 +182,30 @@ int OPTReplacement(int memory_size, std::vector<int> workflow){
                 page_table[table_index] = (*it);
             } else {
                 /*No free spaces in page table*/
-                // victim_page = page_table[0];
+                victim_page = page_table[0];
                 victim_page_distance = 0;
                 for(j = 0; j < memory_size; j++){
                     for(iter = (it + 1); iter != workflow.end(); iter++){if((*iter) == page_table[j]){break;}}
                     if(std::distance(it,iter) > victim_page_distance){
                         victim_page_distance = std::distance(it, iter);
-                        // victim_page = j;
+                        victim_page = j;
                     }
                 }
-                page_table[j] = (*it);
+                page_table[victim_page] = (*it);
             }
         } else {
             /*Page (*it) in memory*/
             hitcounter++;
         }
     }
-    std::cout << "Finished OPT" << std::endl;
-
-    delete[] page_table;
+    delete [] page_table;
     return hitcounter;
 }
+/**
+*
+*
+*
+**/
 int LRUReplacement(int memory_size, std::vector<int> workflow){
 
     int hitcounter = 0;
@@ -274,18 +284,24 @@ int FIFOReplacement(int memory_size, std::vector<int> workflow){
             } else {
                 /*No free spaces in page table*/
                 /*Pop and push from queue*/
-                page_table[page_queue.front()] = (*it);
-                page_queue.pop();
+                table_index = findIndex(memory_size, page_table, page_queue.front());
                 page_queue.push((*it));
+                page_queue.pop();
+                page_table[table_index] = (*it);
             }
         } else {
             /*Page (*it) in memory*/
             hitcounter++;
         }
     }
-    delete[] page_table;
+    delete [] page_table;
     return hitcounter;
 }
+/**
+*
+*
+*
+**/
 int RandReplacement(int memory_size, std::vector<int> workflow){
     /*Local Variables*/
     int hitcounter = 0;
@@ -318,6 +334,11 @@ int RandReplacement(int memory_size, std::vector<int> workflow){
     delete[] page_table;
     return hitcounter;
 }
+/**
+*
+*
+*
+**/
 int ClockReplacemet(int memory_size, std::vector<int> workflow){
 
     //clock replacement
@@ -351,7 +372,11 @@ int ClockReplacemet(int memory_size, std::vector<int> workflow){
     delete[] valid_table;
     return hitcounter;
 }
-
+/**
+*
+*
+*
+**/
 int findIndex(int memory_size, int * table, int value){
     int index;
     for(index = 0; index < memory_size; index++){
@@ -359,7 +384,11 @@ int findIndex(int memory_size, int * table, int value){
     }
     return memory_size;
 }
-
+/**
+*
+*
+*
+**/
 void initTable(int memory_size, int * table){
     int index;
     for(index = 0; index < memory_size; index++){

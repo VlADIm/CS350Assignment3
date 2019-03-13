@@ -1,6 +1,6 @@
 CC = g++
 CC_FLAGS = -Wall -pedantic -g -Wextra
-SRC = replacementpolicy.cpp 
+SRC = replacementpolicy.cpp
 OBJ = $(SRC:.cpp = .o)
 HDR = $(SRC:.cpp = .h)
 EXC = prog3
@@ -15,3 +15,6 @@ generator.o: generator..cpp
 
 clean:
 	rm -f replacementpolicy.o $(EXC)
+
+checkmem:
+	valgrind $(EXEC)
