@@ -89,12 +89,12 @@ void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::str
         std::cout << "[";
         for(int j = 0; j < 5; j++){
 
-            out << data[j][i] << ", ";
-            std::cout << data[j][i] << ", ";
+            out << data[j][i]*1.0/100 << ", ";
+            std::cout << data[j][i]*1.0/100 << ", ";
 
         }
-        out << data[5][i] << std::endl;
-        std::cout << data[5][i] << "]" << std::endl;
+        out << data[5][i]*1.0/100 << std::endl;
+        std::cout << data[5][i]*1.0/100 << "]" << std::endl;
     }
     out.close();
     return;
