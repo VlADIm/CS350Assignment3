@@ -38,7 +38,7 @@ int main(){
     /* Generate Random inputs */
     generateRandom(100, 10000, randVector);
     generate8020(100, 10000, leaning8020Vector);
-    generateLooping(100, 10000, linearVector);
+    generateLooping(50, 10000, linearVector);
 
     std::cout << "Generated" << std::endl;
 

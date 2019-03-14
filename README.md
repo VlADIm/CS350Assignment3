@@ -14,5 +14,10 @@ List of tasks:
     - [ ] FIFO (First In First Out)
     - [ ] Rand (Random)
     - [ ] Clock ()
-- [ ] Generate data for different variables
-- [ ] Generate tables from data
+- [ ] Generate data for different variables [Henry]
+- [ ] Generate tables from data [Henry]
+
+Running:
+
+    To run this program, just run make. Running make will compile everything,
+    run the executable, and generate all of the graphs.
