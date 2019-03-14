@@ -1,21 +1,16 @@
 #include<iostream>
 #include<vector>
 
-
-const int seed = 15;
-
         /* Generates random page accesses */
 void generateRandom(int num_pages, int num_mem_accesses, std::vector<int> &numbers){
-  srand(seed);
   for(int i = 0; i < num_mem_accesses; i++){
-    numbers.push_back(rand() % (num_pages +1));
+    numbers.push_back(rand() % (num_pages));
   }
   return;
 }
 
         /* Generates page accesses, 80% of which access 20% of pages */
 void generate8020(int num_pages, int num_mem_accesses, std::vector<int> &numbers){
-  srand(seed);
   for(int i = 0; i < num_mem_accesses; i++){
     if(rand()%100 < 80){
         numbers.push_back(rand() % (num_pages/5));
@@ -29,7 +24,6 @@ void generate8020(int num_pages, int num_mem_accesses, std::vector<int> &numbers
 
         /* Generates page accesses linearly */
 void generateLooping(int num_pages, int num_mem_accesses, std::vector<int> &numbers){
-  srand(seed);
   int cntr = 0;
   for(int i = 0; i < num_mem_accesses; i++){
     numbers.push_back(cntr);

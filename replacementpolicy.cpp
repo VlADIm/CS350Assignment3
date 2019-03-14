@@ -18,6 +18,7 @@
 void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::string filename);
 
 int main(){
+    srand(time(NULL));
 
     std::cout << "Starting" << std::endl;
     std::vector<int> randVector;
@@ -51,20 +52,29 @@ int main(){
 
     repeatReplacement(memory_size_start, memory_size_end, memory_size_step, randVector, randData);     //MEMCHECK
 
-    //std::vector<std::vector<int>> leaning8020Data = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, leaning8020Vector);
-    //std::vector<std::vector<int>> linearData = repeatReplacement(memory_size_start, memory_size_end, memory_size_step, linearVector);
+    std::vector<std::vector<int>> leaning8020Data;
+    
+    repeatReplacement(memory_size_start, memory_size_end, memory_size_step, leaning8020Vector, leaning8020Data);
 
-    std::cout << "Replaced" << std::endl;
+    std::vector<std::vector<int>> linearData;
+    repeatReplacement(memory_size_start, memory_size_end, memory_size_step, linearVector, linearData);
 
     std::ofstream out;
 
     std::string randFile = "randData.csv";
-    std::string leaning8020File = "leaningleaning8020Data.csv";
+    std::string leaning8020File = "leaning8020Data.csv";
     std::string loopingFile = "loopingData.csv";
 
+    std::cout << "Writing data\n" << std::endl;
+
+    std::cout << "\n\tRANDOM DATA\n" << std::endl;
     writeData(randData, out, randFile);
-    //writeData(leaning8020Data, out, leaning8020File);
-    //writeData(linearData, out, loopingFile);
+
+    std::cout << "\n\t8020 DATA\n" << std::endl;
+    writeData(leaning8020Data, out, leaning8020File);
+
+    std::cout << "\n\tLOOPING DATA\n" << std::endl;
+    writeData(linearData, out, loopingFile);
 
     std::cout << "Done" << std::endl;
 
@@ -75,17 +85,18 @@ int main(){
 void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::string filename){
     out.open(filename);
     out << "#Cache size, OPT, LRU, FIFO, RAND, CLOCK" << std::endl;
-    for(std::vector<std::vector<int>>::iterator iter_0 = data.begin(); iter_0 != data.end(); iter_0++){
-        /* Iterate through the data */
-        for(std::vector<int>::iterator iter_1 = (*iter_0).begin(); iter_1 != (*iter_0).end(); iter_1++){
-            /*Data access here*/
-            out << *iter_1 << ", ";
-            std::cout << *iter_1 << ", ";
+    for(int i = 0; i < 20; i++){
+        std::cout << "[";
+        for(int j = 0; j < 5; j++){
+
+            out << data[j][i] << ", ";
+            std::cout << data[j][i] << ", ";
 
         }
-        out << std::endl;
-        std::cout << std::endl;
+        out << data[5][i] << std::endl;
+        std::cout << data[5][i] << "]" << std::endl;
     }
+    out.close();
     return;
 }
 
@@ -94,30 +105,18 @@ void repeatReplacement(int memory_size_start, int memory_size_end, int memory_si
     int index = 0;
     std::vector<int> data;
 
-    std::cout << "Start" << std::endl;
-
-    std::cout << "1" << std::endl;
-
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data.push_back(index);
     }
     return_vector.push_back(data);
     data = std::vector<int>();
 
-    std::cout << "2" << std::endl;
-
-    // TODO There seems to be an error in this for loop (or how i use args)
-    // I looked at the error and it seems to come from overwriting
-    // data that has already been allocated
-    // It usually occurs on the second index of this loop.
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data.push_back(OPTReplacement(index, workflow));
     }
+
     return_vector.push_back(data);
     data = std::vector<int>();
-
-
-    std::cout << "3" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data.push_back(LRUReplacement(index, workflow));
@@ -125,35 +124,26 @@ void repeatReplacement(int memory_size_start, int memory_size_end, int memory_si
     return_vector.push_back(data);
     data = std::vector<int>();
 
-
-    std::cout << "4" << std::endl;
-
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data.push_back(FIFOReplacement(index, workflow));
     }
+
     return_vector.push_back(data);
     data = std::vector<int>();
-
-
-    std::cout << "5" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data.push_back(RandReplacement(index, workflow));
     }
+
     return_vector.push_back(data);
     data = std::vector<int>();
-
-
-    std::cout << "6" << std::endl;
 
     for(index = memory_size_start; index < (memory_size_end + 1); index += memory_size_step){
         data.push_back(ClockReplacemet(index, workflow));
     }
+
     return_vector.push_back(data);
     data = std::vector<int>();
-
-
-    std::cout << "END" << std::endl;
 }
 /**
 *
