@@ -1,6 +1,10 @@
 #Programming Assignment 3
 ##Due Thursday, March 14th
 
+Contributors:
+
+    Henry Burns and Vladmir Malcevic
+
 List of tasks:
 
 - [ ] Read Chapter 22 from textbook
