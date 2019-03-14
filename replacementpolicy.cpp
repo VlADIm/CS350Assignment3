@@ -86,8 +86,9 @@ void writeData(std::vector<std::vector<int>> &data, std::ofstream &out, std::str
     out.open(filename);
     out << "#Cache size, OPT, LRU, FIFO, RAND, CLOCK" << std::endl;
     for(int i = 0; i < 20; i++){
-        std::cout << "[";
-        for(int j = 0; j < 5; j++){
+        std::cout << "[" << data[0][i] << ", ";
+        out << data[0][i] << ", ";
+        for(int j = 1; j < 5; j++){
 
             out << data[j][i]*1.0/100 << ", ";
             std::cout << data[j][i]*1.0/100 << ", ";
